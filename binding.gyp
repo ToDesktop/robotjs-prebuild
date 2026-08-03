@@ -42,8 +42,8 @@
             }],
 
             ['OS == "linux"', {
-                'defines!': [
-                    'V8_DEPRECATION_WARNINGS'
+                'cflags_cc': [
+                    '-UV8_DEPRECATION_WARNINGS'
                 ],
                 'link_settings': {
                     'libraries': [
