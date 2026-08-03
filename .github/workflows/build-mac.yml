@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+  pull_request:
 
 jobs:
   build:
@@ -24,7 +25,14 @@ jobs:
       - run: npm run prebuild -- --arch arm64
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      - name: upload binaries
+      - name: retain pull request binaries
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuilds-mac-${{ github.sha }}
+          path: prebuilds
+      - name: upload release binaries
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         uses: actions/github-script@v7
         with:
           script: |
