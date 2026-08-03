@@ -6,7 +6,7 @@
         'target_name': 'robotjs',
         'include_dirs': [
             "<!(node -p \"require('node-addon-api').include_dir\")",
-            "<!(node -e \"require('@todesktop/nan')\")",
+            "<!(node -e \"require('nan')\")",
         ],
         'cflags_cc': [
             '-std=c++20',

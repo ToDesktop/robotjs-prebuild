@@ -108,7 +108,7 @@ Please ensure you have the required dependencies before installing:
 - Mac
   - Xcode Command Line Tools.
 - Linux
-  - Python (v2.7 recommended, v3.x.x is not supported).
+  - Python 3.
   - make.
   - A C/C++ compiler like GCC.
   - libxtst-dev and libpng++-dev (`sudo apt-get install libxtst-dev libpng++-dev`).

@@ -7,22 +7,23 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-      - uses: MatteoH2O1999/setup-python@v1
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          python-version: "2.7.x"
-      - run: sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-      - run: sudo apt-get update
-      - run: sudo apt-get install libxtst-dev libpng++-dev gcc-11 g++-11 -y
-      - run: sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 70 --slave /usr/bin/g++ g++ /usr/bin/g++-11
-      - run: npm install --loglevel verbose
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update && sudo apt-get install libxtst-dev libpng++-dev -y
+      - run: npm ci --loglevel verbose
       - run: npm run prebuild
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: upload binaries
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           script: |
             const zip = require('cross-zip')
