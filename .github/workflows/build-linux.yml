@@ -20,11 +20,13 @@ jobs:
           python-version: "3.12"
       - run: sudo apt-get update && sudo apt-get install gcc-12 g++-12 libxtst-dev libpng++-dev -y
       - run: npm ci --loglevel verbose
+      - run: npm run clean-prebuilds
       - run: npm run prebuild
         env:
           CC: gcc-12
           CXX: g++-12
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - run: npm run verify-prebuilds
       - name: retain pull request binaries
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4

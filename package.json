@@ -11,7 +11,9 @@
     "test:win32": "jasmine test/**/*.js",
     "install": "todesktop-node-gyp-build",
     "install-debug": "prebuild-install --verbose || node-gyp rebuild --debug",
-    "prebuild": "prebuildify --target -t node@23.0.0 -t node@22.0.0 -t node@21.0.0 -t node@20.0.0 -t node@19.0.0 -t node@18.0.0 -t node@14.0.0 -t electron@43.2.0 -t electron@38.7.2 -t electron@33.0.0 -t electron@30.0.0",
+    "clean-prebuilds": "node scripts/clean-prebuilds.js",
+    "prebuild": "prebuildify --no-napi -t node@23.0.0 -t node@22.0.0 -t node@21.0.0 -t node@20.0.0 -t node@19.0.0 -t node@18.0.0 -t node@14.0.0 -t electron@43.2.0 -t electron@38.7.2 -t electron@33.0.0 -t electron@30.0.0",
+    "verify-prebuilds": "node scripts/verify-prebuilds.js",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
     "publish": "npm publish"

@@ -19,12 +19,14 @@ jobs:
         with:
           python-version: "3.12"
       - run: npm ci --loglevel verbose
+      - run: npm run clean-prebuilds
       - run: npm run prebuild -- --arch x64
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
       - run: npm run prebuild -- --arch arm64
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      - run: npm run verify-prebuilds -- x64 arm64
       - name: retain pull request binaries
         if: github.event_name == 'pull_request'
         uses: actions/upload-artifact@v4
