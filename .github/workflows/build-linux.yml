@@ -18,10 +18,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: sudo apt-get update && sudo apt-get install libxtst-dev libpng++-dev -y
+      - run: sudo apt-get update && sudo apt-get install clang libxtst-dev libpng++-dev -y
       - run: npm ci --loglevel verbose
       - run: npm run prebuild
         env:
+          CC: clang
+          CXX: clang++
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
       - name: retain pull request binaries
         if: github.event_name == 'pull_request'
