@@ -4,24 +4,35 @@ on:
   push:
     branches:
       - master
+  pull_request:
 
 jobs:
   build:
     runs-on: windows-2022
     steps:
-      - uses: actions/checkout@v3
-      # - run: choco upgrade nodejs.install
-      # - run: choco install nodejs --version 20.0.0
-      - run: choco upgrade chocolatey --version 1.4.0 --allow-downgrade
-      - name: install visualstudio tools
-        run: choco install python visualstudio2022-workload-vctools -y
-        continue-on-error: true
-      - run: npm install
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: npm ci
+      - run: npm run clean-prebuilds
       - run: npm run prebuild
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      - name: upload binaries
-        uses: actions/github-script@v6
+      - run: npm run verify-prebuilds
+      - name: retain pull request binaries
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuilds-windows-${{ github.sha }}
+          path: prebuilds
+      - name: upload release binaries
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/github-script@v7
         with:
           script: |
             const zip = require('cross-zip')

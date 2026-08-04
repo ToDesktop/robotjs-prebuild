@@ -1,29 +1,45 @@
 name: build-mac
 
-on: 
+on:
   push:
     branches:
       - master
+  pull_request:
 
 jobs:
   build:
-    runs-on: macos-11
+    runs-on: macos-14
     steps:
-      - uses: actions/checkout@v3
-      - run: npm --version
-      - run: npm install --loglevel verbose
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: npm ci --loglevel verbose
+      - run: npm run clean-prebuilds
       - run: npm run prebuild -- --arch x64
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
       - run: npm run prebuild -- --arch arm64
         env:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      - name: upload binaries
-        uses: actions/github-script@v6
+      - run: npm run verify-prebuilds -- x64 arm64
+      - name: retain pull request binaries
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: prebuilds-mac-${{ github.sha }}
+          path: prebuilds
+      - name: upload release binaries
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        uses: actions/github-script@v7
         with:
           script: |
             const zip = require('cross-zip')
-            
+
             const script = require('./scripts/upload-binaries.js');
 
             await script({
@@ -31,4 +47,4 @@ jobs:
               context,
               core,
               zip
-            }); 
+            });
