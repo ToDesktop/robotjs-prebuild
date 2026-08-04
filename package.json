@@ -16,7 +16,7 @@
     "verify-prebuilds": "node scripts/verify-prebuilds.js",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
-    "publish": "npm publish"
+    "release": "npm publish"
   },
   "repository": {
     "type": "git",
